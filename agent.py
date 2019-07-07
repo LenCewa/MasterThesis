@@ -4,7 +4,7 @@ import torch
 class ANN(object):
     def __init__(self, in_dim, out_dim, intermediate_dim):
         '''
-        Creates a neural network
+        Creates a neural network: https://github.com/BethanyL/DeepKoopman/blob/master/networkarch.py
         :param in_dim: {int} dimension of the state space
         :param out_dim: {int} dimension of the action space (latent variable)
         :param intermediate_dim: {list of int} dimensions of intermediate layers
