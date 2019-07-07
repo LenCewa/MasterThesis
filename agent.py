@@ -15,7 +15,7 @@ class ANN(object):
         self.model = torch.nn.Sequential()
 
         old_dim = in_dim
-        for i, dim in enumerate(interdims):
+        for i, dim in enumerate(intermediate_dim):
             self.model.add_module("layer %d" % i, torch.nn.Linear(old_dim, dim))
             self.model.add_module("activation %d" % i, torch.nn.Tanh())
             old_dim = dim
