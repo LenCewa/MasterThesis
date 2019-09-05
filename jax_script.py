@@ -19,7 +19,7 @@ def init_network_params(sizes, key):
   keys = random.split(key, len(sizes))
   return [random_layer_params(m, n, k) for m, n, k in zip(sizes[:-1], sizes[1:], keys)]
 
-layer_sizes = [2, 3, 1]
+layer_sizes = [2, 4, 4, 1]
 params = init_network_params(layer_sizes, random.PRNGKey(0))
 initial_params = params
 step_size = 0.0001
@@ -55,7 +55,7 @@ def update(params, x, y):
     grads = grad(loss)(params, x, y)
     return [(w - step_size * dw, b - step_size * db) for (w, b), (dw, db) in zip(params, grads)]
 
-for i in range(1000000):
+for i in range(100):
     params = update(params, train_values, train_labels)
 
 print("Initial Parameter", initial_params)
