@@ -1,9 +1,3 @@
-#https://colab.research.google.com/github/google/jax/blob/master/notebooks/neural_network_and_data_loading.ipynb#scrollTo=-fmWA06xYE7d
-#https://github.com/google/jax/blob/master/examples/resnet50.py
-#https://colab.research.google.com/github/google/jax/blob/master/notebooks/quickstart.ipynb
-#https://github.com/google/jax#mini-libraries
-
-from __future__ import print_function, division, absolute_import
 import jax.numpy as jnp
 from jax import grad, jit, vmap
 from jax import random
