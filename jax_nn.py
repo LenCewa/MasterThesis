@@ -13,19 +13,19 @@ def init_network_params(sizes, key):
   keys = random.split(key, len(sizes))
   return [random_layer_params(m, n, k) for m, n, k in zip(sizes[:-1], sizes[1:], keys)]
 
-layer_sizes = [2, 12, 12, 1]
+layer_sizes = [2, 3, 1]
 params = init_network_params(layer_sizes, random.PRNGKey(0))
 initial_params = params
 step_size = 0.001
 
 training_generator = random.normal(random.PRNGKey(0), (100, 2))
 train_values = jnp.array(training_generator)
-train_labels = [a * b for a, b in train_values]
+train_labels = [a + b for a, b in train_values]
 train_labels = jnp.array(train_labels)
 
 test_generator = random.normal(random.PRNGKey(1), (5, 2 * 1))
 test_values = jnp.array(test_generator)
-test_labels = [a * b for a, b in test_values]
+test_labels = [a + b for a, b in test_values]
 test_labels = jnp.array(test_labels)
 
 def relu(x):
@@ -50,12 +50,16 @@ def loss(params, train_values, train_labels):
 @jit
 def update(params, x, y):
     grads = grad(loss)(params, x, y)
+    #print("Params: ", params)
+    #print("Grads: ", grads)
+    #print("ZIP: ", list(zip(params, grads)))
+    #print("UPDATE: ", [(w - step_size * dw, b - step_size * db) for (w, b), (dw, db) in zip(params, grads)])
     return [(w - step_size * dw, b - step_size * db) for (w, b), (dw, db) in zip(params, grads)]
 
-for i in range(10000):
-    params = update(params, train_values, train_labels)
+#for i in range(2):
+#    params = update(params, train_values, train_labels)
 
-print("Initial Parameter", initial_params)
-print("New Parameter", params)
-preds = batched_predict(params, test_values)
-print("jnp.square(preds[:,0] - test_labels): ", jnp.square(preds[:, 0] - test_labels))
+#print("Initial Parameter", initial_params)
+#print("New Parameter", params)
+#preds = batched_predict(params, test_values)
+#print("jnp.square(preds[:,0] - test_labels): ", jnp.square(preds[:, 0] - test_labels))
