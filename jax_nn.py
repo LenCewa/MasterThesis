@@ -1,9 +1,3 @@
-#https://colab.research.google.com/github/google/jax/blob/master/notebooks/neural_network_and_data_loading.ipynb#scrollTo=-fmWA06xYE7d
-#https://github.com/google/jax/blob/master/examples/resnet50.py
-#https://colab.research.google.com/github/google/jax/blob/master/notebooks/quickstart.ipynb
-#https://github.com/google/jax#mini-libraries
-
-from __future__ import print_function, division, absolute_import
 import jax.numpy as jnp
 from jax import grad, jit, vmap
 from jax import random
@@ -19,10 +13,10 @@ def init_network_params(sizes, key):
   keys = random.split(key, len(sizes))
   return [random_layer_params(m, n, k) for m, n, k in zip(sizes[:-1], sizes[1:], keys)]
 
-layer_sizes = [2, 4, 4, 1]
+layer_sizes = [2, 12, 12, 1]
 params = init_network_params(layer_sizes, random.PRNGKey(0))
 initial_params = params
-step_size = 0.0001
+step_size = 0.001
 
 training_generator = random.normal(random.PRNGKey(0), (100, 2))
 train_values = jnp.array(training_generator)
@@ -39,10 +33,13 @@ def relu(x):
 
 def predict(params, inputs):
     activations = inputs
-    for w, b in params:
+    for w, b in params[:-1]:
         outputs = jnp.dot(w, activations) + b
         activations = relu(outputs)
-    return outputs
+
+    final_w, final_b = params[-1]
+    result = jnp.dot(final_w, activations) + final_b
+    return result
 
 batched_predict = vmap(predict, in_axes=(None, 0))
 
@@ -55,7 +52,7 @@ def update(params, x, y):
     grads = grad(loss)(params, x, y)
     return [(w - step_size * dw, b - step_size * db) for (w, b), (dw, db) in zip(params, grads)]
 
-for i in range(100):
+for i in range(10000):
     params = update(params, train_values, train_labels)
 
 print("Initial Parameter", initial_params)
