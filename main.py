@@ -19,7 +19,7 @@ N = 50
 iterations = 1000
 
 # Do computation
-values, labels = square_wave(-10, 10, 500)
+values, labels = random_fourier(-10, 10, 500)
 fourier = Fourier(T, omega, step_size, N, iterations, values, labels)
 coefficients = fourier.compute_coefficients()
 preds = fourier.batched_predict(coefficients, values)[:, 0]
