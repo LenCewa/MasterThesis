@@ -1,4 +1,7 @@
 # Copyright @ Joe Watson: https://joemwatson.github.io/
+# For the unresolved dependency of autograd:
+# -> just take the pure numpy dynamics functions (pendulum_dynamics, cartpole_dynamics, etc)
+# -> strip out any jacobian / autograd / jax stuff
 
 # USE_FINITE_DIFF = True
 USE_FINITE_DIFF = False
