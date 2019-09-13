@@ -58,5 +58,5 @@ class Fourier(object):
             coeffs = self.update(coeffs, self.tv, self.tl)
         return coeffs
 
-    def get_init_coeff(self):
+    def get_initial_coefficients(self):
         return self.coefficients
