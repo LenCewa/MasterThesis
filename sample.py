@@ -16,3 +16,15 @@ def square_wave(min, max, num):
     labels = [signal.square(x, 0.5) for x in values]
     labels = jnp.array(labels)
     return values, labels
+
+def random_fourier(min, max, num):
+    values = jnp.linspace(min, max, num=num)
+    labels = [5 * jnp.sin(x) + 2 * jnp.cos(4 * x) + 7 for x in values]
+    labels = jnp.array(labels)
+    return values, labels
+
+def trigeonmetric_product(min, max, num):
+    values = jnp.linspace(min, max, num=num)
+    labels = [jnp.sin(x) * jnp.square(jnp.cos(x)) for x in values]
+    labels = jnp.array(labels)
+    return values, labels

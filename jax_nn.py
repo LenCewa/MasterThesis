@@ -50,10 +50,6 @@ def loss(params, train_values, train_labels):
 @jit
 def update(params, x, y):
     grads = grad(loss)(params, x, y)
-    #print("Params: ", params)
-    #print("Grads: ", grads)
-    #print("ZIP: ", list(zip(params, grads)))
-    #print("UPDATE: ", [(w - step_size * dw, b - step_size * db) for (w, b), (dw, db) in zip(params, grads)])
     return [(w - step_size * dw, b - step_size * db) for (w, b), (dw, db) in zip(params, grads)]
 
 #for i in range(2):
