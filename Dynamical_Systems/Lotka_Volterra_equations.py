@@ -5,7 +5,6 @@
 
 import matplotlib.animation as animation
 from scipy.integrate import odeint
-from numpy import arange
 from pylab import *
 
 def BoatFishSystem(state, t):

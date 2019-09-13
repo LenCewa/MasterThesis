@@ -2,7 +2,6 @@
 
 import matplotlib.animation as animation
 from scipy.integrate import odeint
-from numpy import arange
 from pylab import *
 
 def weaklyNonLinear(state, t):
@@ -11,7 +10,7 @@ def weaklyNonLinear(state, t):
     d_x2 = -1 *(x2 - x1**2)
     return [d_x1, d_x2]
 
-t = arange(0, 20, 0.1)
+t = np.linspace(0, 20, num=50)
 init_state = [1, 1]
 state = odeint(weaklyNonLinear, init_state, t)
 
