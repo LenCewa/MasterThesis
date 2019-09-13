@@ -5,35 +5,60 @@
 #env.render()
 
 from Fourier import Fourier
-import jax.numpy as jnp
-from jax import random
-from scipy import signal
+import numpy as np
+import matplotlib.pyplot as plt
+from datetime import datetime
+from sample import *
+import json
 
-T = 2 * jnp.pi
+# Hyperparameter
 omega = 1
+T = (2 * jnp.pi) / omega
 step_size = 0.001
-N = 20
-iterations = 100
+N = 50
+iterations = 1000
 
-training_generator = random.normal(random.PRNGKey(0), (100, 1))
-train_values = 10 * jnp.array(training_generator)
-train_labels = [signal.square(x, 0.5) for x in train_values]
-train_labels = jnp.array(train_labels)[:, 0]
-
-test_generator = random.normal(random.PRNGKey(1), (100, 1))
-test_values = 10 * jnp.array(test_generator)
-test_labels = [signal.square(x, 0.5) for x in test_values]
-test_labels = jnp.array(test_labels)[:, 0]
-
-fourier = Fourier(T, omega, step_size, N, iterations, train_values, train_labels)
-
+# Do computation
+values, labels = square_wave(-10, 10, 500)
+fourier = Fourier(T, omega, step_size, N, iterations, values, labels)
 coefficients = fourier.compute_coefficients()
-initial_coefficients = fourier.get_init_coeff()
+preds = fourier.batched_predict(coefficients, values)[:, 0]
 
-print("Initial Parameter", initial_coefficients)
-print("New Parameter", coefficients)
-preds = fourier.batched_predict(coefficients, test_values)[:, 0]
+# Plot result
+plt.figure()
+plt.plot(labels, label="train")
+plt.plot(preds, label="pred")
+plt.legend()
 
-print("Test_Labels: ", test_labels, " Predictions: ", preds)
 
-print("jnp.square(preds - test_labels): ", jnp.sum(jnp.square(preds - test_labels)) / 100)
+# Timestamp for saving Fourier coefficients, hyperparameter and plots
+dt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+# Save plot
+plt.savefig("Plots/" + dt + ".png")
+
+# Save Fourier coefficients
+np.save("Fourier_Coefficients/" + dt, coefficients)
+
+# Save labels
+np.save("Labels/" + dt, labels)
+
+# Save preditctions
+np.save("Predictions/" + dt, preds)
+
+# Save values
+np.save("Values/" + dt, values)
+
+# Save hyperparameter
+data = {}
+data['hyperparameter'] = []
+data['hyperparameter'].append({
+    'omega': str(omega),
+    'T': str(T),
+    'step_size': str(step_size),
+    'iterations': str(iterations)
+})
+with open("Hyperparameter/" + dt + ".txt", 'w') as outfile:
+    json.dump(data, outfile)
+
+plt.show()
