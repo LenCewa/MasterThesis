@@ -7,7 +7,7 @@ import matplotlib.animation as animation
 from scipy.integrate import odeint
 from pylab import *
 
-def BoatFishSystem(state, t):
+def Lotka_Volterra_equations(state, t):
     fish, boat = state
     d_fish = fish * (2 - boat - fish)
     d_boat = -boat * (1 - 1.5 * fish)
@@ -15,7 +15,7 @@ def BoatFishSystem(state, t):
 
 t = arange(0, 20, 0.1)
 init_state = [1, 1]
-state = odeint(BoatFishSystem, init_state, t)
+state = odeint(Lotka_Volterra_equations, init_state, t)
 
 fig = figure()
 xlabel('number of fish')

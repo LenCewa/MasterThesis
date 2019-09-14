@@ -5,7 +5,7 @@ def get_sampled_trajectory(system):
     if system == 'pendulum':
         print("Return sampled trajectory from Dynamical_Systems/pendulum.py")
     elif system == 'linear_ode':
-        print("Return sampled trajectory from Dynamical_Systems/linear_ode.py")
+        print("Return sampled trajectory from Dynamical_Systems/harmonic_oscillator.py")
     elif system == 'weaklyNL':
         print("Return sampled trajectory from Dynamical_Systems/weakly_non_linear.py")
     else:
