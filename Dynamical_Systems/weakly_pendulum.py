@@ -9,14 +9,14 @@ def weakly_pendulum(y, t):
     return dydt
 
 # Initial condition
-y0 = 0.5 # 1 (two different behaviours)
+y0 = 1e-2 # 1 (two different behaviours)
 
 # Time points
-t = np.linspace(0, 20, num=50)
+t = np.linspace(0, 20, num=500)
 
 # Solve ODE
 y = odeint(weakly_pendulum, y0, t)
-print(y)
+
 
 # Plot result
 plt.plot(t, y)

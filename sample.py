@@ -1,15 +1,22 @@
 from scipy import signal
 import jax.numpy as jnp
+from Dynamical_Systems import weakly_pendulum
 
 def get_sampled_trajectory(system):
+    trajectory = []
     if system == 'pendulum':
         print("Return sampled trajectory from Dynamical_Systems/pendulum.py")
+    elif system == 'weakly_pendulum':
+        print("Return sampled trajectory from Dynamical_Systems/weakly_pendulum.py")
+        trajectory = jnp.array(weakly_pendulum.y.ravel())
     elif system == 'linear_ode':
         print("Return sampled trajectory from Dynamical_Systems/harmonic_oscillator.py")
     elif system == 'weaklyNL':
         print("Return sampled trajectory from Dynamical_Systems/weakly_non_linear.py")
     else:
         print("System not existing.")
+
+    return trajectory
 
 def square_wave(min, max, num):
     values = jnp.linspace(min, max, num=num)

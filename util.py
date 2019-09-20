@@ -1,13 +1,19 @@
 import jax.numpy as jnp
-import json
+# https://arxiv.org/pdf/1709.01568.pdf for G and A
+# Different approach: https://papers.nips.cc/paper/8138-deep-dynamical-modeling-and-control-of-unsteady-fluid-flows.pdf
 
-def jnp_moore_penrose_psinv():
+def G_matrix(gX, dim):
+    G = jnp.zeros((dim, dim))
+    for k in range(len(gX)):
+        G += gX[k].reshape(-1, 1) @ gX[k].reshape(1, -1)
+    return G
 
-    return -1
+def A_matrix(gX, gY, dim):
+    A = jnp.zeros((dim, dim))
+    for k in range(len(gX)):
+        A += gX[k].reshape(-1, 1) @ gY[k].reshape(1, -1)
+    return A
 
-def moore_penrose_psinv():
-    '''
-    Version of: https://arxiv.org/pdf/1709.01568.pdf
-    :return:
-    '''
-    return -1
+def pseudo_inverse(G, dim):
+    # pinv(G) = (G'G)⁻¹G' (that's it?)
+    return jnp.ones((dim, dim))

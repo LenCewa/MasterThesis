@@ -5,6 +5,7 @@
 #env.render()
 
 from Fourier import Fourier
+from Fourier_Koopman_eigenfunctions import FourierKoopmanEigenfunctions
 import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime
@@ -15,9 +16,21 @@ import json
 omega = 1
 T = (2 * jnp.pi) / omega
 step_size = 0.001
-N = 50
-iterations = 1000
+N = 1
+iterations = 2
 
+trajectory = get_sampled_trajectory('weakly_pendulum')
+fke = FourierKoopmanEigenfunctions(T, omega, step_size, N, iterations, trajectory, 2)
+loc = fke.compute_coefficients() #loc = list of coeficcients
+#lops = fke.n_batched_predict(loc, trajectory[:-1]) #lops = list of preds (predictions)
+#print("List of predictions", lops)
+
+values, labels = trigeonmetric_product(-10, 10, 500)
+fourier = Fourier(T, omega, step_size, N, iterations, values, labels)
+coefficients = fourier.compute_coefficients()
+
+
+'''
 # Do computation
 values, labels = trigeonmetric_product(-10, 10, 500)
 fourier = Fourier(T, omega, step_size, N, iterations, values, labels)
@@ -62,3 +75,4 @@ with open("Hyperparameter/" + dt + ".txt", 'w') as outfile:
     json.dump(data, outfile)
 
 plt.show()
+'''
