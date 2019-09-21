@@ -25,10 +25,6 @@ loc = fke.compute_coefficients() #loc = list of coeficcients
 #lops = fke.n_batched_predict(loc, trajectory[:-1]) #lops = list of preds (predictions)
 #print("List of predictions", lops)
 
-values, labels = trigeonmetric_product(-10, 10, 500)
-fourier = Fourier(T, omega, step_size, N, iterations, values, labels)
-coefficients = fourier.compute_coefficients()
-
 
 '''
 # Do computation
