@@ -4,12 +4,13 @@ import matplotlib.pyplot as plt
 
 # Hyperparameter
 dim = 4  # Does not give any major improvements when I increase the dimension (even by a factor of 1e3
-time_index = 105  # If start value y0 = 1e-4 one can choose 210 for the time index
+time_index = 150  # If start value y0 = 1e-4 one can choose 210 for the time index
 time = weakly_pendulum.t[time_index]
 dt = 0.001
 steps = int(time / dt)
 trajectory = weakly_pendulum.y.ravel()
 x0 = weakly_pendulum.y0
+shift_trajectory = int(weakly_pendulum.t[1] / dt)
 
 
 def set_basis(dim, start_value):
@@ -59,27 +60,40 @@ def koopman_prediction(K, start_value, steps, dim_subspace, basis_vector):
             pred += np.linalg.matrix_power(K, s)[:, basis_vector][k] * basis[k]
         koopman_preds += [pred]
         pred = 0
-    return koopman_preds
+    return np.array(koopman_preds)
 
-def compute_error():
-    # TODO: Compute error w.r.t. to different predictions
-    # print((np.sin(trajectory[time]) - pred)**2)
-    return -1
+
+def compute_function_space_error(sin_fitted_trajectory, sin_euler_preds, koopman_preds, cutoff):
+    sin_euler_error = np.power(sin_fitted_trajectory[:(cutoff + 1)] - sin_euler_preds, 2)
+    koopman_error = np.power(sin_fitted_trajectory[:cutoff] - koopman_preds, 2)
+    return sin_euler_error, koopman_error
+
+
+def get_fitted_trajectory(shift):
+    return np.repeat(trajectory, shift)
 
 
 K = compute_operator(dim, dt)
 koopman_preds = koopman_prediction(K, x0, steps, dim, 0)
 euler_preds = euler_prediction(x0, steps)
 sin_euler_preds = np.sin(euler_preds)
-fitted_trajectory = np.repeat(trajectory, 40)
-sin_fitted_trajectory = np.sin(fitted_trajectory)  # TODO: X-Achse anpassen
+fitted_trajectory = get_fitted_trajectory(shift_trajectory)
+sin_fitted_trajectory = np.sin(fitted_trajectory)
+sin_euler_error, koopman_error = compute_function_space_error(sin_fitted_trajectory, sin_euler_preds, koopman_preds, steps)
 
 
 # Plot result
-plt.figure()
-plt.plot(koopman_preds, label="Koopman")
-plt.plot(sin_euler_preds, label="sin(Euler)")
-plt.plot(sin_fitted_trajectory, label="sin(trajectory)")
-plt.plot(fitted_trajectory, label="trajectory")
-plt.legend()
+fig, ax1 = plt.subplots()
+ax1.set_xlabel('steps')
+ax1.set_ylabel('sin(trajectory)')
+ax1.plot(koopman_preds, label="Koopman")
+ax1.plot(sin_euler_preds, label="sin(Euler)")
+ax1.plot(sin_fitted_trajectory, label="sin(trajectory)")
+ax1.plot(fitted_trajectory, label="trajectory")
+ax2 = ax1.twinx()
+ax2.set_ylabel('MSE')
+ax2.plot(sin_euler_error, label="sin(Euler) MSE")
+ax2.plot(koopman_error, label="Koopman MSE")
+fig.tight_layout()
+fig.legend()
 plt.show()
