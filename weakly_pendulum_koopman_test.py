@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 # Hyperparameter
 dim = 4  # Does not give any major improvements when I increase the dimension (even by a factor of 1e3
-time_index = 150  # If start value y0 = 1e-4 one can choose 210 for the time index
+time_index = 105  # If start value y0 = 1e-4 one can choose 210 for the time index
 time = weakly_pendulum.t[time_index]
 dt = 0.001
 steps = int(time / dt)
@@ -84,8 +84,8 @@ sin_euler_error, koopman_error = compute_function_space_error(sin_fitted_traject
 
 # Plot result
 fig, ax1 = plt.subplots()
-ax1.set_xlabel('steps')
-ax1.set_ylabel('sin(trajectory)')
+ax1.set_xlabel('steps / predicted steps: ' + str(steps))
+ax1.set_ylabel('trajectory')
 ax1.plot(koopman_preds, label="Koopman")
 ax1.plot(sin_euler_preds, label="sin(Euler)")
 ax1.plot(sin_fitted_trajectory, label="sin(trajectory)")

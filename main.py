@@ -16,14 +16,20 @@ import json
 omega = 1
 T = (2 * jnp.pi) / omega
 step_size = 0.001
-N = 1
-iterations = 2
+N = 10
+iterations = 10
 
 trajectory = get_sampled_trajectory('weakly_pendulum')
 fke = FourierKoopmanEigenfunctions(T, omega, step_size, N, iterations, trajectory, 2)
-loc = fke.compute_coefficients() #loc = list of coeficcients
-#lops = fke.n_batched_predict(loc, trajectory[:-1]) #lops = list of preds (predictions)
-#print("List of predictions", lops)
+loc = fke.compute_coefficients()  # loc = list of coeficcients
+lops = [fke.batched_predict(c, trajectory[:-1]).ravel() for c in loc]  # lops = list of preds (prediction
+
+# Plot result
+plt.figure()
+plt.plot(np.sin(trajectory), label="train")
+plt.plot(lops[0], label="pred")
+plt.legend()
+plt.show()
 
 
 '''

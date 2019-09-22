@@ -15,5 +15,5 @@ def A_matrix(gX, gY, dim):
     return A
 
 def pseudo_inverse(G, dim):
-    # pinv(G) = (G'G)⁻¹G' (that's it?)
-    return jnp.ones((dim, dim))
+    # pinv(G) = (G'G)⁻¹G' (that's it?) https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf
+    return jnp.linalg.inv(G.transpose() @ G) @ G.transpose()
