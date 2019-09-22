@@ -66,17 +66,20 @@ def compute_error():
     # print((np.sin(trajectory[time]) - pred)**2)
     return -1
 
+
 K = compute_operator(dim, dt)
 koopman_preds = koopman_prediction(K, x0, steps, dim, 0)
 euler_preds = euler_prediction(x0, steps)
 sin_euler_preds = np.sin(euler_preds)
-sin_trajectory = np.sin(trajectory)  # TODO: X-Achse anpassen
+fitted_trajectory = np.repeat(trajectory, 40)
+sin_fitted_trajectory = np.sin(fitted_trajectory)  # TODO: X-Achse anpassen
 
 
 # Plot result
 plt.figure()
 plt.plot(koopman_preds, label="Koopman")
 plt.plot(sin_euler_preds, label="sin(Euler)")
-plt.plot(sin_trajectory, label="sin(trajectory)")
+plt.plot(sin_fitted_trajectory, label="sin(trajectory)")
+plt.plot(fitted_trajectory, label="trajectory")
 plt.legend()
 plt.show()
