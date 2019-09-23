@@ -12,6 +12,7 @@ from datetime import datetime
 from sample import *
 import json
 
+
 # Hyperparameter
 omega = 1
 T = (2 * jnp.pi) / omega
