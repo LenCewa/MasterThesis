@@ -17,8 +17,9 @@ import json
 omega = 1
 T = (2 * jnp.pi) / omega
 step_size = 0.001
-N = 10
-iterations = 100
+N = 8
+iterations = 10
+
 
 trajectory = get_sampled_trajectory('weakly_pendulum')
 fke = FourierKoopmanEigenfunctions(T, omega, step_size, N, iterations, trajectory, 2)
@@ -33,8 +34,8 @@ plt.legend()
 plt.show()
 
 # Save loc and lops
-np.save("Koopman_Coefficients/" + "test_run_N=10_iterations=100", loc)
-np.save("Koopman_Predictions/" + "test_run_N=10_iterations=100", lops)
+np.save("Koopman_Coefficients/" + "test_run_N=8_iterations=10", loc)
+np.save("Koopman_Predictions/" + "test_run_N=8_iterations=10", lops)
 
 '''
 # Do computation

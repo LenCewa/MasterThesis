@@ -53,7 +53,7 @@ class FourierKoopmanEigenfunctions(Fourier):
         K = jnp.matmul(G, A) #G @ A
         return jnp.sum(jnp.square(gY - jnp.dot(gX, K)))
 
-    @partial(jit, static_argnums=(0,))
+    #@partial(jit, static_argnums=(0,))
     def update(self, loc, X, Y):
         grads = grad(self.simple_Koopman_loss)(loc, X, Y)
         updated_loc = []
@@ -67,4 +67,5 @@ class FourierKoopmanEigenfunctions(Fourier):
         loc = self.coefficients
         for i in range(self.iterations):
             loc = self.update(loc, self.X_trajectory, self.Y_trajectory)
+            print("Iteration: ", i, " done.")
         return loc

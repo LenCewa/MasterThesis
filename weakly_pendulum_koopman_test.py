@@ -74,6 +74,9 @@ def get_fitted_trajectory(shift):
 
 
 K = compute_operator(dim, dt)
+print(K)
+print(np.linalg.matrix_power(K, 4000))
+'''
 koopman_preds = koopman_prediction(K, x0, steps, dim, 0)
 euler_preds = euler_prediction(x0, steps)
 sin_euler_preds = np.sin(euler_preds)
@@ -97,3 +100,4 @@ ax2.plot(koopman_error, label="Koopman MSE")
 fig.tight_layout()
 fig.legend()
 plt.show()
+'''
