@@ -12,7 +12,7 @@ def weakly_pendulum(y, t):
 y0 = np.pi - 1e-2 #1e-4 dann geht auch time = 210
 
 # Time points
-t = np.linspace(0, 20, num=500)
+t = np.linspace(0, 20, num=50)
 
 # Solve ODE
 y = odeint(weakly_pendulum, y0, t)

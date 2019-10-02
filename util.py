@@ -6,17 +6,18 @@ import jax.numpy as jnp
 def G_matrix(gX, dim):
     G = jnp.zeros((dim, dim))
     for k in range(len(gX)):
-        G += gX[k].reshape(-1, 1) @ gX[k].reshape(1, -1)
+        #print("gX[", k, "]: ", gX[k].reshape(-1, 1))
+        G += jnp.matmul(gX[k].reshape(-1, 1), gX[k].reshape(1, -1))
     return G
 
 
 def A_matrix(gX, gY, dim):
     A = jnp.zeros((dim, dim))
     for k in range(len(gX)):
-        A += gX[k].reshape(-1, 1) @ gY[k].reshape(1, -1)
+        A += jnp.matmul(gX[k].reshape(-1, 1), gY[k].reshape(1, -1))
     return A
 
 
 def pseudo_inverse(G, dim):
     # pinv(G) = (G'G)⁻¹G' (that's it?) https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf
-    return jnp.linalg.inv(G.transpose() @ G) @ G.transpose()
+    return jnp.matmul(jnp.linalg.inv(jnp.matmul(G.transpose(), G)), G.transpose())
