@@ -13,8 +13,8 @@ def pendulum(y, t, b, c):
     return dydt
 
 b, c = 0.25, 5.0
-y0 = [np.pi - 0.1, 0.0]
-t = np.linspace(0, 20, num=50)
+y0 = [np.pi - 1e-2, 0.0]
+t = np.linspace(0, 20, num=500)
 
 y = odeint(pendulum, y0, t, args=(b, c))
 

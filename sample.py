@@ -1,11 +1,12 @@
 from scipy import signal
 import jax.numpy as jnp
-from Dynamical_Systems import weakly_pendulum
+from Dynamical_Systems import weakly_pendulum, pendulum
 
 def get_sampled_trajectory(system):
     trajectory = []
     if system == 'pendulum':
         print("Return sampled trajectory from Dynamical_Systems/pendulum.py")
+        #trajectory = jnp.array(pendulum.y.ravel())
     elif system == 'weakly_pendulum':
         print("Return sampled trajectory from Dynamical_Systems/weakly_pendulum.py")
         trajectory = jnp.array(weakly_pendulum.y.ravel())

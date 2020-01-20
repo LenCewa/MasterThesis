@@ -24,7 +24,7 @@ def compute_operator(dim_subspace, dt):
     row0 = np.zeros((1, dim_subspace))
     row0[0][0] = 1
     row1 = np.zeros((1, dim_subspace))
-    row1[0][0] = dt
+    row1[0][0] = -dt
     row1[0][1] = 1
     row = np.append(row0, row1, axis=0)
     for s in range(2, dim_subspace):
@@ -38,7 +38,7 @@ def euler_prediction(start_value, steps):
     euler_preds = [xk]
     for s in range(steps):
         xk = euler_preds[s]
-        euler_preds += [xk + np.sin(xk)*dt]
+        euler_preds += [xk - np.sin(xk)*dt]
     return euler_preds
 
 
@@ -59,8 +59,13 @@ def koopman_prediction(K, start_value, steps, dim_subspace, basis_vector):
         for k in range(dim):
             pred += np.linalg.matrix_power(K, s)[:, basis_vector][k] * basis[k]
         koopman_preds += [pred]
+        # Do projection
+        # if (((s + 1) % 100) == 0):
+        #     print("koopman_preds[{}] = ".format(s), koopman_preds[s] - np.arcsin(koopman_preds[s]))
+        #     basis = set_basis(dim_subspace, np.arcsin(koopman_preds[s]))
         pred = 0
     return np.array(koopman_preds)
+
 
 
 def compute_function_space_error(sin_fitted_trajectory, sin_euler_preds, koopman_preds, cutoff):
@@ -76,7 +81,7 @@ def get_fitted_trajectory(shift):
 K = compute_operator(dim, dt)
 print(K)
 print(np.linalg.matrix_power(K, 4000))
-'''
+
 koopman_preds = koopman_prediction(K, x0, steps, dim, 0)
 euler_preds = euler_prediction(x0, steps)
 sin_euler_preds = np.sin(euler_preds)
@@ -86,18 +91,42 @@ sin_euler_error, koopman_error = compute_function_space_error(sin_fitted_traject
 
 
 # Plot result
-fig, ax1 = plt.subplots()
-ax1.set_xlabel('steps / predicted steps: ' + str(steps))
-ax1.set_ylabel('trajectory')
-ax1.plot(koopman_preds, label="Koopman")
-ax1.plot(sin_euler_preds, label="sin(Euler)")
-ax1.plot(sin_fitted_trajectory, label="sin(trajectory)")
-ax1.plot(fitted_trajectory, label="trajectory")
-ax2 = ax1.twinx()
+# font = {'family' : 'normal',
+#         'weight' : 'bold',
+#         'size'   : 22}
+
+def configure_plots():
+    import matplotlib
+    from distutils.spawn import find_executable
+    matplotlib.rcParams['font.family'] = 'serif'
+    matplotlib.rcParams['figure.figsize'] = [19, 19]
+    matplotlib.rcParams['legend.fontsize'] = 26
+    matplotlib.rcParams['axes.titlesize'] = 42
+    matplotlib.rcParams['axes.labelsize'] = 42
+    if find_executable("latex"):
+        matplotlib.rcParams['text.usetex'] = True
+        matplotlib.rcParams['text.latex.unicode'] = True
+
+configure_plots()
+
+fig, (ax1, ax2) = plt.subplots(2, 1, sharey=True)
+ax1.set_xlabel('steps') #/ predicted steps: ' + str(steps))#, **font)
+ax1.set_ylabel('fitted trajectory')#, **font)
+ax1.plot(koopman_preds, label="Koopman prediction", linewidth=10)
+#ax1.plot(sin_euler_preds, label="sin(Euler)", linewidth=10)
+ax1.plot(sin_fitted_trajectory, label="embedded trajectory", linewidth=5)
+ax2.plot(fitted_trajectory, label="trajectory", linewidth=5)
+
+##
+ax2.set_xlabel('steps')
+ax2.set_ylabel('trajectory')
+##
+'''ax2 = ax1.twinx()
 ax2.set_ylabel('MSE')
 ax2.plot(sin_euler_error, label="sin(Euler) MSE")
-ax2.plot(koopman_error, label="Koopman MSE")
-fig.tight_layout()
-fig.legend()
+ax2.plot(koopman_error, label="Koopman MSE")'''
+#fig.tight_layout()
+#fig.legend()#fontsize='xx-large')
+ax1.legend()
+ax2.legend()
 plt.show()
-'''

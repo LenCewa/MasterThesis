@@ -54,7 +54,7 @@ class Fourier(object):
 
     def compute_coefficients(self):
         coeffs = self.coefficients
-        print((coeffs))
+        #print((coeffs))
         for i in range(self.iterations):
             coeffs = self.update(coeffs, self.tv, self.tl)
         return coeffs

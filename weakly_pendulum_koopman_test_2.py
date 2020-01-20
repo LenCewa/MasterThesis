@@ -3,7 +3,7 @@ from Dynamical_Systems import weakly_pendulum
 import matplotlib.pyplot as plt
 
 # Hyperparameter
-time_index = 200  # If start value y0 = 1e-4 one can choose 210 for the time index
+time_index = 105  # If start value y0 = 1e-4 one can choose 210 for the time index
 time = weakly_pendulum.t[time_index]
 dt = 0.001
 steps = int(time / dt)
@@ -64,26 +64,40 @@ def compute_function_space_error(sin_fitted_trajectory, sin_euler_preds, koopman
 def get_fitted_trajectory(shift):
     return np.repeat(trajectory, shift)
 
-koopman_preds = koopman_prediction(steps, 1)
+koopman_preds = koopman_prediction(steps, 0) #1
 euler_preds = euler_prediction(x0, steps)
-sin_euler_preds = np.sin(euler_preds) * np.cos(euler_preds)
+sin_euler_preds = np.sin(euler_preds) #* np.cos(euler_preds)
 fitted_trajectory = get_fitted_trajectory(shift_trajectory)
-sin_fitted_trajectory = np.sin(fitted_trajectory) * np.cos(fitted_trajectory)
+sin_fitted_trajectory = np.sin(fitted_trajectory) #* np.cos(fitted_trajectory)
 sin_euler_error, koopman_error = compute_function_space_error(sin_fitted_trajectory, sin_euler_preds, koopman_preds, steps)
 
 
 # Plot result
-fig, ax1 = plt.subplots()
-ax1.set_xlabel('steps / predicted steps: ' + str(steps))
-ax1.set_ylabel('trajectory')
-ax1.plot(koopman_preds, label="Koopman")
-ax1.plot(sin_euler_preds, label="sin(Euler)")
-ax1.plot(sin_fitted_trajectory, label="sin(trajectory)")
-ax1.plot(fitted_trajectory, label="trajectory")
+def configure_plots():
+    import matplotlib
+    from distutils.spawn import find_executable
+    matplotlib.rcParams['font.family'] = 'serif'
+    matplotlib.rcParams['figure.figsize'] = [19, 19]
+    matplotlib.rcParams['legend.fontsize'] = 26
+    matplotlib.rcParams['axes.titlesize'] = 42
+    matplotlib.rcParams['axes.labelsize'] = 42
+    if find_executable("latex"):
+        matplotlib.rcParams['text.usetex'] = True
+        matplotlib.rcParams['text.latex.unicode'] = True
+
+configure_plots()
+
+fig, (ax1, ax2) = plt.subplots(2, 1, sharey=True)
+ax1.set_xlabel('steps')# / predicted steps: ' + str(steps), **font)
+ax1.set_ylabel('fitted trajectory')#, **font)
+ax1.plot(koopman_preds, label="Koopman prediction", linewidth=10)
+#ax1.plot(sin_euler_preds, label="sin(Euler)", linewidth=10)
+ax1.plot(sin_fitted_trajectory, label="embedded trajectory", linewidth=5)
+ax2.plot(fitted_trajectory, label="trajectory", linewidth=5)
 '''ax2 = ax1.twinx()
 ax2.set_ylabel('MSE')
 ax2.plot(sin_euler_error, label="sin(Euler) MSE")
 ax2.plot(koopman_error, label="Koopman MSE")'''
 fig.tight_layout()
-fig.legend()
+ax1.legend(fontsize='xx-large')
 plt.show()

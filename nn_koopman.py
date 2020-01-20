@@ -1,6 +1,9 @@
 import jax.numpy as jnp
+import numpy as np
+import matplotlib.pyplot as plt
 from jax import grad, jit, vmap
 from jax import random
+from sample import *
 
 # A helper function to randomly initialize weights and biases
 # for a dense neural network layer
@@ -13,20 +16,15 @@ def init_network_params(sizes, key):
   keys = random.split(key, len(sizes))
   return [random_layer_params(m, n, k) for m, n, k in zip(sizes[:-1], sizes[1:], keys)]
 
-layer_sizes = [2, 10, 16, 10, 1]
+layer_sizes = [1, 186, 1] # no parameter in [350 , 400]
+steps = 30
 params = init_network_params(layer_sizes, random.PRNGKey(0))
 initial_params = params
+#print("INITIAL PARAMS: ", initial_params)
 step_size = 0.001
-
-training_generator = random.normal(random.PRNGKey(0), (100, 2))
-train_values = jnp.array(training_generator)
-train_labels = [a + b for a, b in train_values]
-train_labels = jnp.array(train_labels)
-
-test_generator = random.normal(random.PRNGKey(1), (20, 2 * 1))
-test_values = jnp.array(test_generator)
-test_labels = [a + b for a, b in test_values]
-test_labels = jnp.array(test_labels)
+trajectory = get_sampled_trajectory('weakly_pendulum')
+X = jnp.array(trajectory[0:steps]).reshape(-1,1) # train values
+Y = jnp.array(trajectory[1:steps + 1]) # train labels
 
 def relu(x):
     return jnp.maximum(0, x)
@@ -51,13 +49,31 @@ def loss(params, train_values, train_labels):
 @jit
 def update(params, x, y):
     grads = grad(loss)(params, x, y)
+    #print(grads)
     return [(w - step_size * dw, b - step_size * db) for (w, b), (dw, db) in zip(params, grads)]
 
-for i in range(50000):
-    params = update(params, train_values, train_labels)
+# for i in range(5000):
+#     params = update(params, X, Y)
+#     preds = batched_predict(params, X)
+#     #print(params)
+#     #print("Loss = ", jnp.sum(jnp.square(preds[:, 0] - Y)), " || in iteration = ", i + 1)
+#
+# # Save Parameter
+# np.save("NN_Parameter/" + "layers_1_186_1_iterations=5000", params)
 
-print(params)
-#print("Initial Parameter", initial_params)
-#print("New Parameter", params)
-preds = batched_predict(params, test_values)
-print("jnp.square(preds[:,0] - test_labels): ", (jnp.square(preds[:, 0] - test_labels)))
+params = np.load("NN_Parameter/layers_1_186_1_iterations=5000.npy")
+# Plot NN Prediction
+x0 = jnp.pi - 1e-2
+koopman_preds = [jnp.array([x0])]
+for i in range(steps):
+    #print(koopman_preds)
+    #print(predict(params, koopman_preds[i]))
+    koopman_preds += [predict(params, koopman_preds[i])]
+
+print("Params: ", params)
+print("Koopman Preds", koopman_preds)
+plt.plot(koopman_preds, label='NN preds')
+plt.plot(trajectory[0:steps], label='trajectory')
+plt.legend()
+plt.show()
+
