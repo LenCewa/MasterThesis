@@ -69,7 +69,7 @@ def update(params, x, y):
 # # Save Loss
 # np.save("NN_Loss/layers_1_17_17_1_iterations=500", loss_values)
 
-params = np.load("NN_Parameter/layers_1_186_1_iterations=5000.npy")
+params = np.load("layers_1_186_1_iterations=5000.npy")
 
 # Plot y and y_hat
 X_normal = jnp.array(trajectory[0:steps]) # Wegen Batch Predict haben wir einen Reshape bei der Variablen X
@@ -104,4 +104,3 @@ print("y_hat: ", y_hat)
 # plt.ylim(-1,4)
 # plt.legend()
 # plt.show()
-

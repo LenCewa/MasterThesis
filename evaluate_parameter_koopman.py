@@ -102,7 +102,7 @@ def lift_trajectory(trajectory, basis, steps):
 
 def embedding_function(basis):
     Y = []
-    X = np.linspace(0, 20, num=500)
+    X = np.linspace(0, np.pi*2, num=500)
     a0 = basis[0]
     for x in X:
         periodic_sum = 0

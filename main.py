@@ -18,7 +18,7 @@ T = (2 * jnp.pi) / omega
 step_size = 0.001
 N = 15
 dim_subspace = 15
-iterations = 10000
+iterations = 1000
 
 
 trajectory = get_sampled_trajectory('weakly_pendulum')
@@ -57,10 +57,11 @@ plt.legend()
 plt.show()'''
 
 # Save loc and lops
-np.save("Koopman_Coefficients/" + "test_run_N=15_iterations=10000_dim=15", loc)
-np.save("Koopman_Predictions/" + "test_run_N=15_iterations=10000_dim=15", lops)
-np.save("Koopman_Condition/" + "test_run_N=15_iterations=10000_dim=15", cond_history)
-
+np.save("Koopman_Coefficients/" + "test_run_N=5_iterations=1000_dim=15", loc)
+np.save("Koopman_Predictions/" + "test_run_N=5_iterations=1000_dim=15", lops)
+np.save("Koopman_Condition/" + "test_run_N=5_iterations=1000_dim=15", cond_history)
+np.save("Koopman_Loss/" + "test_run_N=5_iterations=1000_dim=15", fke.lol)
+#print("Loss history: ", fke.lol)
 '''
 # Do computation
 values, labels = trigeonmetric_product(-10, 10, 500)
@@ -68,8 +69,8 @@ fourier = Fourier(T, omega, step_size, N, iterations, values, labels)
 coefficients = fourier.compute_coefficients()
 preds = fourier.batched_predict(coefficients, values)[:, 0]
 
-# Plot resultplt.plot(preds, label="pred")
-
+# Plot result
+plt.plot(preds, label="pred")
 
 # Timestamp for saving Fourier coefficients, hyperparameter and plots
 

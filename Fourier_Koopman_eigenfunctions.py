@@ -19,6 +19,7 @@ class FourierKoopmanEigenfunctions(Fourier):
         :param trajectory: {numpy n-d-array}
         :param dim_sub_space:
         '''
+        self.lol = [] # list of loss
         self.trajectory = trajectory
         self.P = len(trajectory)
         self.X_trajectory = trajectory[:-1]
@@ -67,10 +68,12 @@ class FourierKoopmanEigenfunctions(Fourier):
 
         G = jnp.linalg.inv(G)  # pseudo_inverse(G, self.dim)
         K = jnp.matmul(G, A)
+        loss = jnp.sum(jnp.square(gY - jnp.dot(gX, K)))
         print("gX.shape = {} | gY.shape = {} | K.shape = {}".format(gX.shape, gY.shape, K.shape))
         #print("NN loss: ", jnp.sum(jnp.square(gY - jnp.dot(gX, K))))
-        print("Analytic Loss: ", jnp.sum(jnp.square(gY - jnp.dot(gX, K))))
-        return jnp.sum(jnp.square(gY - jnp.dot(gX, K)))
+        print("Analytic Loss: ", loss)
+        self.lol += [loss]
+        return loss
 
     def multiple_step_Koopman_loss(self, loc, X, Y):
         gX0, gY = [], []
