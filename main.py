@@ -16,12 +16,12 @@ import json
 omega = 1
 T = (2 * jnp.pi) / omega
 step_size = 0.001
-N = 15
-dim_subspace = 15
-iterations = 1000
+N = 6
+dim_subspace = 10
+iterations = 450
 
-
-trajectory = get_sampled_trajectory('weakly_pendulum')
+dyns = 'pendulum'
+trajectory = get_sampled_trajectory(dyns)
 fke = FourierKoopmanEigenfunctions(T, omega, step_size, N, iterations, trajectory, dim_subspace)
 loc, cond_history = fke.compute_coefficients()  # loc = list of coefficients
 lops = [fke.batched_predict(c, trajectory[:-1]).ravel() for c in loc]  # lops = list of preds (predictions)
@@ -57,11 +57,11 @@ plt.legend()
 plt.show()'''
 
 # Save loc and lops
-np.save("Koopman_Coefficients/" + "test_run_N=5_iterations=1000_dim=15", loc)
-np.save("Koopman_Predictions/" + "test_run_N=5_iterations=1000_dim=15", lops)
-np.save("Koopman_Condition/" + "test_run_N=5_iterations=1000_dim=15", cond_history)
-np.save("Koopman_Loss/" + "test_run_N=5_iterations=1000_dim=15", fke.lol)
-#print("Loss history: ", fke.lol)
+np.save("Koopman_Coefficients/" + dyns + "_test_run_N="+ str(N) +"_iterations="+str(iterations)+"_dim="+str(dim_subspace), loc)
+np.save("Koopman_Predictions/" + dyns + "_test_run_N="+ str(N) +"_iterations="+str(iterations)+"_dim="+str(dim_subspace), lops)
+np.save("Koopman_Condition/" + dyns + "_test_run_N="+ str(N) +"_iterations="+str(iterations)+"_dim="+str(dim_subspace), cond_history)
+np.save("Koopman_Loss/" + dyns + "_test_run_N="+ str(N) +"_iterations="+str(iterations)+"_dim="+str(dim_subspace), fke.lol)
+print("Loss history: ", fke.lol)
 '''
 # Do computation
 values, labels = trigeonmetric_product(-10, 10, 500)

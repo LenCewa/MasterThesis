@@ -6,7 +6,7 @@ def get_sampled_trajectory(system):
     trajectory = []
     if system == 'pendulum':
         print("Return sampled trajectory from Dynamical_Systems/pendulum.py")
-        #trajectory = jnp.array(pendulum.y.ravel())
+        trajectory = jnp.array(pendulum.y[:,1].ravel())
     elif system == 'weakly_pendulum':
         print("Return sampled trajectory from Dynamical_Systems/weakly_pendulum.py")
         trajectory = jnp.array(weakly_pendulum.y.ravel())

@@ -1,22 +1,28 @@
 import numpy as np
-import jax.numpy as jnp
 import matplotlib.pyplot as plt
 from Fourier import *
 from util import *
 
-N = 15
+N = 5
 steps = 500
-dim = 15
+dim = 12
 basis_vector = 5  # max dim - 1
-dN = 5  # Cutoff
-ddN = 5  # Cutoff
 
-fourier = Fourier(1, 1, 0, N, 0, [], [])
-d_fourier = dFourier(1, 1, 0, dN, 0, [], [])
-dd_fourier = ddFourier(1, 1, 0, ddN, 0, [], [])
-
-loc = np.load("/home/len/ReinforcementLearning/MasterThesis/Koopman_Coefficients/test_run_N=15_iterations=10000_dim=15.npy")
+loc = np.load("/home/len/ReinforcementLearning/MasterThesis/Koopman_Coefficients/test_run_N=15_iterations=5000_dim=12.npy")
 c = loc[basis_vector]
+dN = 5
+ddN = 5
+
+omega = 1
+T = (2 * jnp.pi) / omega
+step_size = 0.001
+iterations = 450
+
+fourier = Fourier(T, omega, step_size, N, iterations, [], [])
+d_fourier = dFourier(T, omega, step_size, N, iterations, [], [])
+dd_fourier = ddFourier(T, omega, step_size, N, iterations, [], [])
+
+
 
 def set_fourier_coefficients(c, N):
     for i in range(N + 1):
@@ -62,14 +68,89 @@ def newton_optimization_method(y, x0, iterations):
 
     return res, err
 
-t = jnp.linspace(0, 20, num=500)
-res, err = newton_optimization_method(0.217, 0, 20)
-print("res", res)
-print("res", jnp.array(res))
-print("err", err)
+
+def L(x, y):
+    fx = fourier.predict(fourier.coefficients, x)
+    return np.abs(y - fx)**2
+
+def dL(x, y):
+    fx = fourier.predict(fourier.coefficients, x)
+    dfx = d_fourier.predict(fourier.coefficients, x)
+    return 2 * (y - fx) * (-dfx)
+
+def ddL(x, y):
+    fx = fourier.predict(fourier.coefficients, x)
+    dfx = d_fourier.predict(fourier.coefficients, x)
+    ddfx = dd_fourier.predict(fourier.coefficients, x)
+    return 2 * (dfx**2 - (y - fx) * ddfx)
 
 
-plt.figure()
-plt.plot(fourier.batched_predict(fourier.coefficients, jnp.array(res)))
-plt.plot(fourier.batched_predict(fourier.coefficients, t[:21]))
+t = jnp.linspace(0, 10*np.pi, num=1000)
+x0 = 1
+y0 = fourier.predict(fourier.coefficients, x0)
+const_y0 = np.full(len(t), y0)
+
+f = fourier.batched_predict(fourier.coefficients, t)
+df = d_fourier.batched_predict(fourier.coefficients, t)
+ddf = dd_fourier.batched_predict(fourier.coefficients, t)
+const_0 = np.full(len(t), 0)
+
+L = L(t, y0)
+dL = dL(t, y0)
+ddL = ddL(t, y0)
+
+fig, axs = plt.subplots(3, 2)
+axs[0, 0].plot(t, f)
+axs[0, 0].plot(t, const_y0, 'tab:red')
+axs[0, 0].set_title('f and y*')
+
+axs[1, 0].plot(t, df, 'tab:orange')
+axs[1, 0].set_title('df')
+
+axs[2, 0].plot(t, ddf, 'tab:green')
+axs[2, 0].set_title('ddf')
+
+axs[0, 1].plot(t, L)
+axs[0, 1].plot(t, const_0, 'tab:red')
+axs[0, 1].set_title('L')
+
+axs[1, 1].plot(t, dL, 'tab:orange')
+axs[1, 1].plot(t, const_0, 'tab:red')
+axs[1, 1].set_title('dL')
+
+axs[2, 1].plot(t, ddL, 'tab:green')
+axs[2, 1].set_title('ddL')
+
+for ax in axs.flat:
+    ax.set(xlabel='x-label', ylabel='y-label')
+
+# Hide x labels and tick labels for top plots and y ticks for right plots.
+# for ax in axs.flat:
+#     ax.label_outer()
+
 plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# res, err = newton_optimization_method(0.217977, 0, 20)
+# print("res", res)
+# print("res", jnp.array(res))
+# print("err", err)
+
+# plt.figure()
+# plt.plot(t, fourier.batched_predict(fourier.coefficients, t))  # f(x)
+# #plt.plot(t, d_fourier.batched_predict(fourier.coefficients, t))  # f'(x)
+# #plt.plot(t, dd_fourier.batched_predict(fourier.coefficients, t))  # f''(x)
+# plt.plot(t, np.full(len(t), y0))
+# plt.show()

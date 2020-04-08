@@ -16,11 +16,14 @@ t = np.linspace(0, 20, num=500)
 
 # Solve ODE
 y = odeint(weakly_pendulum, y0, t)
-
-
+# z = np.concatenate((y, y), axis=1)
+# np.savetxt("simple_pendulum_2.csv", z, delimiter=",")
+print(y[:10])
 # Plot result
-plt.plot(t, y)
-plt.xlabel('time')
-plt.ylabel('y(t)')
+fig, ax = plt.subplots()
+ax.plot(t, y, label='x(t)')
+ax.plot(t, np.ones(len(t)) * (np.pi - 1))
+ax.set(xlabel='time (s)', ylabel='θ (rad)', title='Trajectory of the simple pendulum')
+ax.grid()
 plt.legend()
 plt.show()

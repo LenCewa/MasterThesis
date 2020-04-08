@@ -12,14 +12,14 @@ def pendulum(y, t, b, c):
     dydt = [omega, -b * omega - c * np.sin(theta)]
     return dydt
 
-b, c = 0.25, 5.0
+b, c = 2, 3.0
 y0 = [np.pi - 1e-2, 0.0]
 t = np.linspace(0, 20, num=500)
 
 y = odeint(pendulum, y0, t, args=(b, c))
 
-plt.plot(t, y[:, 0], 'b')
-#plt.plot(t, y[:, 1], 'g')
+#plt.plot(t, y[:, 0], 'b')
+plt.plot(t, y[:, 1], 'g')
 plt.legend(loc='best')
 plt.xlabel('t')
 plt.grid()

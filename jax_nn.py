@@ -1,7 +1,10 @@
 import jax.numpy as jnp
 from jax import grad, jit, vmap
 from jax import random
+import matplotlib.pyplot as plt
+import time
 
+start_time = time.time()
 # A helper function to randomly initialize weights and biases
 # for a dense neural network layer
 def random_layer_params(m, n, key, scale=1e-2):
@@ -13,20 +16,22 @@ def init_network_params(sizes, key):
   keys = random.split(key, len(sizes))
   return [random_layer_params(m, n, k) for m, n, k in zip(sizes[:-1], sizes[1:], keys)]
 
-layer_sizes = [2, 10, 16, 10, 1]
+layer_sizes = [1, 17, 17, 1]
 params = init_network_params(layer_sizes, random.PRNGKey(0))
 initial_params = params
-step_size = 0.001
+step_size = 1e-4
 
-training_generator = random.normal(random.PRNGKey(0), (100, 2))
+training_generator = jnp.linspace(0, 2*jnp.pi, num=50)
 train_values = jnp.array(training_generator)
-train_labels = [a + b for a, b in train_values]
+train_labels = [jnp.sin(x) for x in train_values]
 train_labels = jnp.array(train_labels)
+train_values = jnp.array(training_generator).reshape(-1,1)
 
-test_generator = random.normal(random.PRNGKey(1), (20, 2 * 1))
+test_generator = jnp.linspace(0, 2*jnp.pi, num=500)
 test_values = jnp.array(test_generator)
-test_labels = [a + b for a, b in test_values]
+test_labels = [jnp.sin(x) for x in test_values]
 test_labels = jnp.array(test_labels)
+test_values = jnp.array(test_generator).reshape(-1,1)
 
 def relu(x):
     return jnp.maximum(0, x)
@@ -45,7 +50,6 @@ batched_predict = vmap(predict, in_axes=(None, 0))
 
 def loss(params, train_values, train_labels):
     preds = batched_predict(params, train_values)[:, 0]
-    #print("Loss: ", jnp.sum(jnp.square(preds - train_labels)))
     return jnp.sum(jnp.square(preds - train_labels))
 
 @jit
@@ -53,11 +57,21 @@ def update(params, x, y):
     grads = grad(loss)(params, x, y)
     return [(w - step_size * dw, b - step_size * db) for (w, b), (dw, db) in zip(params, grads)]
 
-for i in range(50000):
-    params = update(params, train_values, train_labels)
+loss_values = []
 
-print(params)
-#print("Initial Parameter", initial_params)
-#print("New Parameter", params)
-preds = batched_predict(params, test_values)
-print("jnp.square(preds[:,0] - test_labels): ", (jnp.square(preds[:, 0] - test_labels)))
+for i in range(1000000):
+    params = update(params, train_values, train_labels)
+    if i % 100 == 0:
+        l = loss(params, train_values, train_labels)
+        loss_values += [l]
+        print(i, l)
+
+execution_time = (time.time() - start_time) / 60
+print("Execution Time: ", execution_time)
+print(jnp.sum(test_labels)/len(test_labels))
+print(batched_predict(params, test_values)[0, 0])
+plt.figure()
+plt.plot(batched_predict(params, test_values)[:, 0], "r.-",   label="prediction")
+plt.plot(test_labels, "b.-", label="labels")
+plt.legend()
+plt.show()

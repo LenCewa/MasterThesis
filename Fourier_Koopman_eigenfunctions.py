@@ -44,6 +44,11 @@ class FourierKoopmanEigenfunctions(Fourier):
         G = jnp.linalg.inv(G)  # pseudo_inverse(G, self.dim)
         K = jnp.matmul(G, A)
         cond_history = plot_conditon(K, cond_history)
+        loss = jnp.sum(jnp.square(gY - jnp.dot(gX, K)))
+        print("gX.shape = {} | gY.shape = {} | K.shape = {}".format(gX.shape, gY.shape, K.shape))
+        # print("NN loss: ", jnp.sum(jnp.square(gY - jnp.dot(gX, K))))
+        print("Analytic Loss: ", loss)
+        self.lol += [loss]
         return cond_history
 
     def simple_Koopman_loss(self, loc, X, Y):
@@ -70,9 +75,6 @@ class FourierKoopmanEigenfunctions(Fourier):
         K = jnp.matmul(G, A)
         loss = jnp.sum(jnp.square(gY - jnp.dot(gX, K)))
         print("gX.shape = {} | gY.shape = {} | K.shape = {}".format(gX.shape, gY.shape, K.shape))
-        #print("NN loss: ", jnp.sum(jnp.square(gY - jnp.dot(gX, K))))
-        print("Analytic Loss: ", loss)
-        self.lol += [loss]
         return loss
 
     def multiple_step_Koopman_loss(self, loc, X, Y):
@@ -117,7 +119,7 @@ class FourierKoopmanEigenfunctions(Fourier):
             print("Iteration: ", i + 1, "/", self.iterations, " START:")
             loc, cond_history = self.update(loc, self.X_trajectory, self.Y_trajectory, cond_history)
             print("List of coefficients: ", loc)
-            #print("Condition(K): ", cond_history[-1])
+            print("Condition(K): ", cond_history[-1])
         return loc, cond_history
 
 

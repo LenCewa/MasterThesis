@@ -89,44 +89,57 @@ fitted_trajectory = get_fitted_trajectory(shift_trajectory)
 sin_fitted_trajectory = np.sin(fitted_trajectory)
 sin_euler_error, koopman_error = compute_function_space_error(sin_fitted_trajectory, sin_euler_preds, koopman_preds, steps)
 
+#
+t = np.linspace(0, 20, num=20000)
+t2= t[:4208]
+fig, ax = plt.subplots()
+ax.plot(t, sin_fitted_trajectory, label='sin(x(t))')
+ax.plot(t2, koopman_preds, label='[K^t]sin(x0)')
+ax.set(xlabel='time (s)', ylabel='sin(θ)', title='Predicting the simple pendulum with a 4-dim basis')
+ax.grid()
+plt.legend()
+fig.savefig("4dimself.png")
+plt.show()
+
+
 
 # Plot result
 # font = {'family' : 'normal',
 #         'weight' : 'bold',
 #         'size'   : 22}
 
-def configure_plots():
-    import matplotlib
-    from distutils.spawn import find_executable
-    matplotlib.rcParams['font.family'] = 'serif'
-    matplotlib.rcParams['figure.figsize'] = [19, 19]
-    matplotlib.rcParams['legend.fontsize'] = 26
-    matplotlib.rcParams['axes.titlesize'] = 42
-    matplotlib.rcParams['axes.labelsize'] = 42
-    if find_executable("latex"):
-        matplotlib.rcParams['text.usetex'] = True
-        matplotlib.rcParams['text.latex.unicode'] = True
+# def configure_plots():
+#     import matplotlib
+#     from distutils.spawn import find_executable
+#     matplotlib.rcParams['font.family'] = 'serif'
+#     matplotlib.rcParams['figure.figsize'] = [19, 19]
+#     matplotlib.rcParams['legend.fontsize'] = 26
+#     matplotlib.rcParams['axes.titlesize'] = 42
+#     matplotlib.rcParams['axes.labelsize'] = 42
+#     if find_executable("latex"):
+#         matplotlib.rcParams['text.usetex'] = True
+#         matplotlib.rcParams['text.latex.unicode'] = True
 
-configure_plots()
+# configure_plots()
 
-fig, (ax1, ax2) = plt.subplots(2, 1, sharey=True)
-ax1.set_xlabel('steps') #/ predicted steps: ' + str(steps))#, **font)
-ax1.set_ylabel('fitted trajectory')#, **font)
-ax1.plot(koopman_preds, label="Koopman prediction", linewidth=10)
-#ax1.plot(sin_euler_preds, label="sin(Euler)", linewidth=10)
-ax1.plot(sin_fitted_trajectory, label="embedded trajectory", linewidth=5)
-ax2.plot(fitted_trajectory, label="trajectory", linewidth=5)
-
-##
-ax2.set_xlabel('steps')
-ax2.set_ylabel('trajectory')
-##
-'''ax2 = ax1.twinx()
-ax2.set_ylabel('MSE')
-ax2.plot(sin_euler_error, label="sin(Euler) MSE")
-ax2.plot(koopman_error, label="Koopman MSE")'''
-#fig.tight_layout()
-#fig.legend()#fontsize='xx-large')
-ax1.legend()
-ax2.legend()
-plt.show()
+# fig, (ax1, ax2) = plt.subplots(2, 1, sharey=True)
+# ax1.set_xlabel('steps') #/ predicted steps: ' + str(steps))#, **font)
+# ax1.set_ylabel('fitted trajectory')#, **font)
+# ax1.plot(koopman_preds, label="Koopman prediction")
+# #ax1.plot(sin_euler_preds, label="sin(Euler)", linewidth=10)
+# ax1.plot(sin_fitted_trajectory, label="embedded trajectory")
+# ax2.plot(fitted_trajectory, label="trajectory")
+#
+# ##
+# ax2.set_xlabel('steps')
+# ax2.set_ylabel('trajectory')
+# ##
+# '''ax2 = ax1.twinx()
+# ax2.set_ylabel('MSE')
+# ax2.plot(sin_euler_error, label="sin(Euler) MSE")
+# ax2.plot(koopman_error, label="Koopman MSE")'''
+# #fig.tight_layout()
+# #fig.legend()#fontsize='xx-large')
+# ax1.legend()
+# ax2.legend()
+# plt.show()

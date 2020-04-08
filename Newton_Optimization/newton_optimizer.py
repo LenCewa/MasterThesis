@@ -13,6 +13,7 @@ def newton_optimization_method(y, x0, iterations):
     return res, err
 
 def g(x):
+    # sin(2x) + 4cos(7x)
     return x**2 + 1
 
 def dL(x):

@@ -9,14 +9,20 @@ trajectory = get_sampled_trajectory("weakly_pendulum")
 X = trajectory[:-1]
 Y = trajectory[1:]
 P = len(trajectory)
-dim = 12
+dim = 4
 
-def basis(x):
+def basis2(x):
     basis = [np.sin(x), np.sin(x) * np.cos(x), np.sin(x) * np.power(np.cos(x), 2), np.power(np.sin(x), 3),
              np.power(np.sin(x), 3) * np.cos(x), np.power(np.cos(x), 3) * np.sin(x),
              np.power(np.sin(x), 3) * np.power(np.cos(x), 2), np.power(np.sin(x), 3) * np.power(np.cos(x), 3),
              np.power(np.sin(x), 6), np.power(np.sin(x), 6) * np.cos(x),
              np.power(np.sin(x), 6) * np.power(np.cos(x), 2), np.power(np.sin(x), 6) * np.power(np.cos(x), 3)]
+    return basis
+
+def basis(x):
+    basis = []
+    for k in range(dim):
+        basis += [np.sin(x) * np.power(np.cos(x), k)]
     return basis
 
 def A_matrix(gX, gY):
@@ -44,6 +50,7 @@ def koopman_operator():
     G = 1/P * G_matrix(gX)
     
     G = np.linalg.inv(G)
+    print(np.linalg.cond(G))
     K = np.matmul(G, A)
 
     return K
@@ -51,12 +58,28 @@ def koopman_operator():
 
 K = koopman_operator()
 
-print("Shape of the Koopman operator: ", K.shape)
-print(K)
+# print("Shape of the Koopman operator: ", K.shape)
+# print(K)
+#
+# basis_vector = 0
+# x0 = np.pi - 1e-2
+# steps = 500
+# pred = 0
+# ph = 5
+# mpc = []
+#
+# koopman_preds = []
+# for s in range(0, steps, ph):
+#     abasis = basis(trajectory[s])
+#     for m in range(ph):
+#         for k in range(dim):
+#             pred += np.linalg.matrix_power(K, m)[:, basis_vector][k] * abasis[k]
+#         mpc += [pred]
+#         pred = 0
 
 basis_vector = 0
 x0 = np.pi - 1e-2
-steps = 100
+steps = 105
 pred = 0
 
 koopman_preds = []
@@ -67,8 +90,21 @@ for s in range(steps):
     koopman_preds += [pred]
     pred = 0
 
-
-plt.plot(koopman_preds, label='koopman preds')
-plt.plot(np.sin(trajectory), label='lifted trajectory')
+print(koopman_preds[:5])
+t = np.linspace(0, 20, num=500)
+t2= t[:105]
+fig, ax = plt.subplots()
+ax.plot(t, np.sin(trajectory), label='sin(x(t))')
+ax.plot(t2, koopman_preds, label='[K^t]sin(x_0)')
+ax.set(xlabel='time (s)', ylabel='sin(θ)', title='Predicting the simple pendulum with EDMD with a ' + str(K.shape[0]) +'-dim basis')
+ax.grid()
 plt.legend()
+plt.ylim(-0.05, 1.05)
+fig.savefig(str(K.shape[0]) + "dimEDMD.png")
 plt.show()
+
+# plt.plot(t, koopman_preds, label='koopman prediction')
+# plt.plot(t, np.sin(trajectory), label='lifted trajectory')
+# plt.legend()
+# plt.ylim(-0.1, 1.1)
+# plt.show()
