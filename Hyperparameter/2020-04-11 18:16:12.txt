@@ -1,0 +1,1 @@
+{"hyperparameter": [{"omega": "1", "T": "6.283185307179586", "N": "5", "step_size": "0.001", "iterations": "100", "execution_time_minutes": 0.4229391535123189}]}

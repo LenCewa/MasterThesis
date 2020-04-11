@@ -9,9 +9,9 @@ trajectory = get_sampled_trajectory("weakly_pendulum")
 X = trajectory[:-1]
 Y = trajectory[1:]
 P = len(trajectory)
-dim = 4
+dim = 12
 
-def basis2(x):
+def basis(x):
     basis = [np.sin(x), np.sin(x) * np.cos(x), np.sin(x) * np.power(np.cos(x), 2), np.power(np.sin(x), 3),
              np.power(np.sin(x), 3) * np.cos(x), np.power(np.cos(x), 3) * np.sin(x),
              np.power(np.sin(x), 3) * np.power(np.cos(x), 2), np.power(np.sin(x), 3) * np.power(np.cos(x), 3),
@@ -19,7 +19,7 @@ def basis2(x):
              np.power(np.sin(x), 6) * np.power(np.cos(x), 2), np.power(np.sin(x), 6) * np.power(np.cos(x), 3)]
     return basis
 
-def basis(x):
+def basis2(x):
     basis = []
     for k in range(dim):
         basis += [np.sin(x) * np.power(np.cos(x), k)]
@@ -91,16 +91,16 @@ for s in range(steps):
     pred = 0
 
 print(koopman_preds[:5])
-t = np.linspace(0, 20, num=500)
-t2= t[:105]
+#t = np.linspace(0, 20, num=500)
+#t2= t[:105]
 fig, ax = plt.subplots()
-ax.plot(t, np.sin(trajectory), label='sin(x(t))')
-ax.plot(t2, koopman_preds, label='[K^t]sin(x_0)')
-ax.set(xlabel='time (s)', ylabel='sin(θ)', title='Predicting the simple pendulum with EDMD with a ' + str(K.shape[0]) +'-dim basis')
+ax.plot(np.sin(trajectory), label='sin(x(t))')
+ax.plot(koopman_preds, label='[K^t]sin(x_0)')
+ax.set(xlabel='time-steps', ylabel='sin(θ)', title='Approximating the simple pendulum with EDMD with a ' + str(K.shape[0]) +'-dim basis')
 ax.grid()
 plt.legend()
 plt.ylim(-0.05, 1.05)
-fig.savefig(str(K.shape[0]) + "dimEDMD.png")
+fig.savefig(str(K.shape[0]) + "dimEDMD.pdf")
 plt.show()
 
 # plt.plot(t, koopman_preds, label='koopman prediction')

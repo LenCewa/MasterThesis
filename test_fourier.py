@@ -13,7 +13,7 @@ start_time = time.time()
 omega = 1
 T = (2 * jnp.pi) / omega
 step_size = 0.001
-N = 15
+N = 5
 #dim_subspace = 15
 iterations = 100
 

@@ -18,7 +18,7 @@ t = np.linspace(0, 20, num=500)
 y = odeint(weakly_pendulum, y0, t)
 # z = np.concatenate((y, y), axis=1)
 # np.savetxt("simple_pendulum_2.csv", z, delimiter=",")
-print(y[:3])
+# print(y[:3])
 # Plot result
 # fig, ax = plt.subplots()
 # ax.plot(t, y, label='x(t)')

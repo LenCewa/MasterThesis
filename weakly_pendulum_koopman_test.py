@@ -81,7 +81,7 @@ def get_fitted_trajectory(shift):
 K = compute_operator(dim, dt)
 print(K)
 print(np.linalg.matrix_power(K, 4000))
-
+print("STEPS ::: ", steps)
 koopman_preds = koopman_prediction(K, x0, steps, dim, 0)
 euler_preds = euler_prediction(x0, steps)
 sin_euler_preds = np.sin(euler_preds)
@@ -90,12 +90,12 @@ sin_fitted_trajectory = np.sin(fitted_trajectory)
 sin_euler_error, koopman_error = compute_function_space_error(sin_fitted_trajectory, sin_euler_preds, koopman_preds, steps)
 
 #
-t = np.linspace(0, 20, num=20000)
-t2= t[:4208]
+#t = np.linspace(0, 20, num=20000)
+#t2= t[:4208]
 fig, ax = plt.subplots()
-ax.plot(t, sin_fitted_trajectory, label='sin(x(t))')
-ax.plot(t2, koopman_preds, label='[K^t]sin(x0)')
-ax.set(xlabel='time (s)', ylabel='sin(θ)', title='Predicting the simple pendulum with a 4-dim basis')
+ax.plot(sin_fitted_trajectory, label='sin(x(t))')
+ax.plot(koopman_preds, label='[K^t]sin(x0)')
+ax.set(xlabel='time-steps / dt', ylabel='sin(θ)', title='Approximating the simple pendulum with a 4-dim basis for dt = 0.001')
 ax.grid()
 plt.legend()
 fig.savefig("4dimself.pdf")

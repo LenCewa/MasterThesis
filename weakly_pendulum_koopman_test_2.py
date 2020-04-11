@@ -77,7 +77,7 @@ sin_euler_error, koopman_error = compute_function_space_error(sin_fitted_traject
 fig, ax = plt.subplots()
 ax.plot(sin_fitted_trajectory, label='sin(x(t))')
 ax.plot(koopman_preds, label='[K^t]sin(x0)')
-ax.set(xlabel='time (s)', ylabel='sin(θ)', title='Predicting the simple pendulum with a 12-dim basis')
+ax.set(xlabel='time-steps / dt', ylabel='sin(θ)', title='Approximating the simple pendulum with a 12-dim basis for dt = 0.001')
 ax.grid()
 plt.legend()
 fig.savefig("12dimself.pdf")
