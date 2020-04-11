@@ -98,7 +98,7 @@ ax.plot(t2, koopman_preds, label='[K^t]sin(x0)')
 ax.set(xlabel='time (s)', ylabel='sin(θ)', title='Predicting the simple pendulum with a 4-dim basis')
 ax.grid()
 plt.legend()
-fig.savefig("4dimself.png")
+fig.savefig("4dimself.pdf")
 plt.show()
 
 

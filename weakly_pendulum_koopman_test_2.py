@@ -72,15 +72,15 @@ sin_fitted_trajectory = np.sin(fitted_trajectory) #* np.cos(fitted_trajectory)
 sin_euler_error, koopman_error = compute_function_space_error(sin_fitted_trajectory, sin_euler_preds, koopman_preds, steps)
 
 
-t = np.linspace(0, 20, num=20000)
-t2= t[:4208]
+#t = np.linspace(0, 20, num=20000)
+#t2= t[:4208]
 fig, ax = plt.subplots()
-ax.plot(t, sin_fitted_trajectory, label='sin(x(t))')
-ax.plot(t2, koopman_preds, label='[K^t]sin(x0)')
+ax.plot(sin_fitted_trajectory, label='sin(x(t))')
+ax.plot(koopman_preds, label='[K^t]sin(x0)')
 ax.set(xlabel='time (s)', ylabel='sin(θ)', title='Predicting the simple pendulum with a 12-dim basis')
 ax.grid()
 plt.legend()
-fig.savefig("12dimself.png")
+fig.savefig("12dimself.pdf")
 plt.show()
 
 # Plot result
