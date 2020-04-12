@@ -7,10 +7,10 @@ from Dynamical_Systems import weakly_pendulum
 y = weakly_pendulum.y
 
 # p1 = np.load("mpc_rollout_length=1_basis=0.npy")
-p5 = np.load("mpc_rollout_length=5_basis=0.npy")
-p10 = np.load("mpc_rollout_length=10_basis=0.npy")
-p25 = np.load("mpc_rollout_length=25_basis=0.npy")
-p50 = np.load("mpc_rollout_length=50_basis=0.npy")
+p5 = np.load("mpc_rollout_length=5.npy")
+p10 = np.load("mpc_rollout_length=10.npy")
+p25 = np.load("mpc_rollout_length=25.npy")
+p50 = np.load("mpc_rollout_length=50.npy")
 
 p5 = p5.reshape(len(y), 5)
 t5 = []
@@ -61,6 +61,6 @@ ax.plot(y, label='x(t)')
 ax.set(xlabel='time-steps', ylabel='θ (rad)', title='Comparing different prediction horizons')
 ax.grid()
 # plt.legend()
-fig.savefig("mpc_our.pdf")
+fig.savefig("nn_mpc_45000.pdf")
 plt.show()
 plt.figure()

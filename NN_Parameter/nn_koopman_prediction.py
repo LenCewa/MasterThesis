@@ -18,7 +18,7 @@ def init_network_params(sizes, key):
   keys = random.split(key, len(sizes))
   return [random_layer_params(m, n, k) for m, n, k in zip(sizes[:-1], sizes[1:], keys)]
 
-layer_sizes = [1, 17, 17, 1] # no. parameter in [350 , 400]
+layer_sizes = [1, 9, 9, 1] # no. parameter in [350 , 400]
 params = init_network_params(layer_sizes, random.PRNGKey(0))
 initial_params = params
 step_size = 1e-4
@@ -55,11 +55,13 @@ def update(params, x, y):
     grads = grad(loss)(params, x, y)
     return [(w - step_size * dw, b - step_size * db) for (w, b), (dw, db) in zip(params, grads)]
 
-# X_normal = jnp.array(trajectory[0:steps])
-# true_y = Y - X_normal
-# loss_values = []
-#
-# for i in range(1000000):
+X_normal = jnp.array(trajectory[0:steps])
+true_y = Y - X_normal
+loss_values = []
+
+nniter = 4500
+
+# for i in range(nniter):
 #     params = update(params, X, 100*true_y)
 #     if i % 100 == 0:
 #         l = loss(params, X, 100*true_y)
@@ -70,12 +72,12 @@ def update(params, x, y):
 # print("Execution Time: ", execution_time)
 #
 # # Save Parameter
-# np.save("debugged", params)
+# np.save("NN_1_9_9_1_it="+str(nniter), params)
 #
 # # Save Loss
-# np.save("/home/len/ReinforcementLearning/MasterThesis/NN_Loss/debugged", loss_values)
+# np.save("/home/len/ReinforcementLearning/MasterThesis/NN_Loss/NN_1_9_9_1_it="+str(nniter), loss_values)
 
-params = np.load("debugged.npy")
+params = np.load("NN_1_9_9_1_it="+str(nniter)+".npy")
 
 # Plot y and y_hat
 # X_normal = jnp.array(trajectory[0:steps]) # Wegen Batch Predict haben wir einen Reshape bei der Variablen X
@@ -85,36 +87,56 @@ params = np.load("debugged.npy")
 # for i in range(steps):
 #     y_hat += [predict(params, jnp.array([X_normal[i]]))/100]
 #
-# print("y_hat: ", y_hat)
 # plt.figure()
 # plt.plot(true_y, label="y_train")
 # plt.plot(y_hat, label="f(x_train)")
 # plt.legend()
 # plt.show()
-#
-# print(jnp.sum(true_y)/len(true_y))
-# print(y_hat)
 
+# foo1 = [450] # 45000 habe ich schon
+# foo2 = [50]
+# for nni in foo1:
+#     for r in foo2:
+#         prediction = []
+#         for t in range(len(trajectory)):
+#             prediction += [jnp.array([trajectory[t]])]
+#             for m in range(r-1):
+#                 prediction +=[prediction[t*r+m] + predict(params, prediction[t*r+m])/100]
+#             np.save("NN_Reconstructions_RollOut/" + "mpc_rollout_length=" + str(r) + "_it=" + str(nni), prediction)
+#         print("Rollout=",r, " and NN_iter=", nni)
 
 
 # Plot NN Prediction
-x0 = jnp.pi - 1
-koopman_preds = [jnp.array([x0])]
-#Roll-Out: x'_1 = x0 + f_NN(x0) then x'_2 = x'_1 + f(x'_1)
-#True values
-for i in range(steps):
-    koopman_preds += [koopman_preds[i] + predict(params, koopman_preds[i])/100]
+nn_iterations = [4500, 450000] # 450 und 45000 habe ich schon
+rollout_list = [1, 5, 10, 25, 50]
+for nni in nn_iterations:
+    for r in rollout_list:
+        prediction = []
+        for t in range(len(trajectory)):
+            prediction += [jnp.array([trajectory[t]])]
+            for m in range(r-1):
+                prediction +=[prediction[t*r+m] + predict(params, prediction[t*r+m])/100]
+            np.save("NN_Reconstructions_RollOut/" + "mpc_rollout_length=" + str(r) + "_it=" + str(nni), prediction)
+        print("Rollout=",r, " and NN_iter=", nni)
 
-t = np.linspace(0, 20, num=500)
-# Plot result
-fig, ax = plt.subplots()
-ax.plot(t, trajectory, label='x(t)')
-ax.plot(t, koopman_preds, label='x\'_{t+1} = x\'_t + NN(x\'_t) and x_0 = π-10⁻²')
-ax.set(xlabel='time (s)', ylabel='θ (rad)', title='Neural Network Dynamics Prediction')
-ax.grid()
-plt.legend()
-#fig.savefig("NN.pdf")
-plt.show()
+
+
+# koopman_preds = [jnp.array([x0])]
+# #Roll-Out: x'_1 = x0 + f_NN(x0) then x'_2 = x'_1 + f(x'_1)
+# #True values
+# for i in range(steps):
+#     koopman_preds += [koopman_preds[i] + predict(params, koopman_preds[i])/100]
+#
+#
+# # Plot result
+# fig, ax = plt.subplots()
+# ax.plot(trajectory, label='x(t)')
+# ax.plot(koopman_preds, label='x\'_{t+1} = x\'_t + NN(x\'_t) and x_0 = π-10⁻²')
+# ax.set(xlabel='time (s)', ylabel='θ (rad)', title='Neural Network Dynamics Prediction')
+# ax.grid()
+# plt.legend()
+# #fig.savefig("NN.pdf")
+# plt.show()
 
 # print("Koopman Preds", koopman_preds)
 # plt.figure()
