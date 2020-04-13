@@ -58,7 +58,7 @@ for a, b in mpc5:
     ax.plot(a, b, 'r', label='mpc5')
 
 ax.plot(y, label='x(t)')
-ax.set(xlabel='time-steps', ylabel='θ (rad)', title='Comparing different prediction horizons')
+ax.set(xlabel='time-steps', ylabel='θ (rad)', title='Non-linear neural network dynamics (45000 training iterations)')
 ax.grid()
 # plt.legend()
 fig.savefig("nn_mpc_45000.pdf")

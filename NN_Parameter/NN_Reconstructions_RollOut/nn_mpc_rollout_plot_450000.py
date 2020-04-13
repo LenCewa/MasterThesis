@@ -6,11 +6,13 @@ from Dynamical_Systems import weakly_pendulum
 # trajectory of the weakly pendulum
 y = weakly_pendulum.y
 
-# p1 = np.load("mpc_rollout_length=1_basis=0.npy")
-p5 = np.load("mpc_rollout_length=5_it=450.npy")
-p10 = np.load("mpc_rollout_length=10_it=450.npy")
-p25 = np.load("mpc_rollout_length=25_it=450.npy")
-p50 = np.load("mpc_rollout_length=50_it=450.npy")
+iter = 450000
+
+p1 = np.load("mpc_rollout_length=1_it="+str(iter)+".npy")
+p5 = np.load("mpc_rollout_length=5_it="+str(iter)+".npy")
+p10 = np.load("mpc_rollout_length=10_it="+str(iter)+".npy")
+p25 = np.load("mpc_rollout_length=25_it="+str(iter)+".npy")
+p50 = np.load("mpc_rollout_length=50_it="+str(iter)+".npy")
 
 p5 = p5.reshape(len(y), 5)
 t5 = []
@@ -58,9 +60,9 @@ for a, b in mpc5:
     ax.plot(a, b, 'r', label='mpc5')
 
 ax.plot(y, label='x(t)')
-ax.set(xlabel='time-steps', ylabel='θ (rad)', title='Non-linear neural network dynamics (450 training iterations)')
+ax.set(xlabel='time-steps', ylabel='θ (rad)', title='Non-linear neural network dynamics (450000 training iterations)')
 ax.grid()
 # plt.legend()
-fig.savefig("nn_mpc_450.pdf")
+fig.savefig("nn_mpc_450000.pdf")
 plt.show()
 plt.figure()

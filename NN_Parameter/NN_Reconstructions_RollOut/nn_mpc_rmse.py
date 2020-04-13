@@ -6,11 +6,19 @@ from Dynamical_Systems import weakly_pendulum
 # trajectory of the weakly pendulum
 y = weakly_pendulum.y
 
-p1 = np.load("mpc_rollout_length=1_basis=0.npy")
-p5 = np.load("mpc_rollout_length=5_basis=0.npy")
-p10 = np.load("mpc_rollout_length=10_basis=0.npy")
-p25 = np.load("mpc_rollout_length=25_basis=0.npy")
-p50 = np.load("mpc_rollout_length=50_basis=0.npy")
+iter = 450000
+
+# p5 = np.load("mpc_rollout_length=1.npy")
+# p5 = np.load("mpc_rollout_length=5.npy")
+# p10 = np.load("mpc_rollout_length=10.npy")
+# p25 = np.load("mpc_rollout_length=25.npy")
+# p50 = np.load("mpc_rollout_length=50.npy")
+
+p1 = np.load("mpc_rollout_length=1_it="+str(iter)+".npy")[:,0]
+p5 = np.load("mpc_rollout_length=5_it="+str(iter)+".npy")[:,0]
+p10 = np.load("mpc_rollout_length=10_it="+str(iter)+".npy")[:,0]
+p25 = np.load("mpc_rollout_length=25_it="+str(iter)+".npy")[:,0]
+p50 = np.load("mpc_rollout_length=50_it="+str(iter)+".npy")[:,0]
 
 y1 = y[:, 0]
 rmse1 = np.sqrt(np.sum((p1-y1)**2)/len(p1))
@@ -34,19 +42,19 @@ for i in range(10 - 1):
 rmse10 = np.sqrt(np.sum((p10-y10)**2)/len(p10))
 print("RMSE 10 = ", rmse10)
 
-l25 = int(len(p25) / 25)
-y25 = y[:l25, 0]
+y25 = y[:, 0]
 h = np.roll(y25, -1)
 for i in range(25 - 1):
+    h[-1] = 0
     y25 = np.append(y25, h)
     h = np.roll(h, -1)
 rmse25 = np.sqrt(np.sum((p25-y25)**2)/len(p25))
 print("RMSE 25 = ", rmse25)
 
-l50 = int(len(p50) / 50)
-y50 = y[:l50, 0]
+y50 = y[:, 0]
 h = np.roll(y50, -1)
 for i in range(50 - 1):
+    h[-1] = 0
     y50 = np.append(y50, h)
     h = np.roll(h, -1)
 rmse50 = np.sqrt(np.sum((p50-y50)**2)/len(p50))

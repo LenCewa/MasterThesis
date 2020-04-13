@@ -59,7 +59,7 @@ X_normal = jnp.array(trajectory[0:steps])
 true_y = Y - X_normal
 loss_values = []
 
-nniter = 4500
+# nniter = 4500
 
 # for i in range(nniter):
 #     params = update(params, X, 100*true_y)
@@ -77,7 +77,7 @@ nniter = 4500
 # # Save Loss
 # np.save("/home/len/ReinforcementLearning/MasterThesis/NN_Loss/NN_1_9_9_1_it="+str(nniter), loss_values)
 
-params = np.load("NN_1_9_9_1_it="+str(nniter)+".npy")
+# params = np.load("NN_1_9_9_1_it="+str(nniter)+".npy")
 
 # Plot y and y_hat
 # X_normal = jnp.array(trajectory[0:steps]) # Wegen Batch Predict haben wir einen Reshape bei der Variablen X
@@ -107,9 +107,10 @@ params = np.load("NN_1_9_9_1_it="+str(nniter)+".npy")
 
 
 # Plot NN Prediction
-nn_iterations = [4500, 450000] # 450 und 45000 habe ich schon
+nn_iterations = [450, 45000, 450000, 4500]
 rollout_list = [1, 5, 10, 25, 50]
 for nni in nn_iterations:
+    params = np.load("NN_1_9_9_1_it=" + str(nni) + ".npy")
     for r in rollout_list:
         prediction = []
         for t in range(len(trajectory)):
