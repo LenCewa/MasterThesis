@@ -43,6 +43,7 @@ for i in range(25 - 1):
 rmse25 = np.sqrt(np.sum((p25-y25)**2)/len(p25))
 print("RMSE 25 = ", rmse25)
 
+
 l50 = int(len(p50) / 50)
 y50 = y[:l50, 0]
 h = np.roll(y50, -1)
