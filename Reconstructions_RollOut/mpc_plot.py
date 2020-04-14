@@ -58,7 +58,7 @@ for a, b in mpc5:
     ax.plot(a, b, 'r', label='mpc5')
 
 ax.plot(y, label='x(t)')
-ax.set(xlabel='time-steps', ylabel='θ (rad)', title='Comparing different prediction horizons')
+ax.set(xlabel='time-steps', ylabel='θ (rad)', title='Recovered trajectory of the simple pendulum')
 ax.grid()
 # plt.legend()
 fig.savefig("mpc_our.pdf")

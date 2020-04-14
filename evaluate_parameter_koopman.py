@@ -9,7 +9,7 @@ from util import *
 N = 6
 steps = 500
 dim = 10
-basis_vector = 0 #max dim - 1
+basis_vector = 9 #max dim - 1
 fourier = Fourier(1, 1, 0.001, N, 0, [], [])
 
 def set_fourier_coefficients(c, N):
@@ -166,6 +166,16 @@ plt.legend()
 fig.savefig("EvalKoopmanBasis="+str(basis_vector)+"mpc2050INF.png")
 plt.show()
 '''
+lifted_trajectory = lift_trajectory(trajectory, loc[basis_vector], steps)
+k = basis_vector
+fig, ax = plt.subplots()
+ax.plot(lifted_trajectory, label="Ψ_" + str(k + 1) + "(x(t))")
+ax.set(xlabel='t', ylabel="Ψ_" + str(k + 1) + "(x(t))", title='Koopman embedding of the simple pendulum w.r.t. Ψ_'+ str(k + 1))
+ax.grid()
+plt.legend()
+fig.savefig("lift" + str(k + 1) + ".pdf")
+plt.show()
+
 
 
 # plt.plot(koopman_preds, label='koopman preds')
